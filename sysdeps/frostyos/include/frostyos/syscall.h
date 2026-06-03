@@ -14,7 +14,14 @@
     SC(MMAP, mmap) \
     SC(MUNMAP, munmap) \
     SC(MPROTECT, mprotect) \
-    SC(SETTCB, settcb)
+    SC(SETTCB, settcb) \
+    SC(GETPID, getpid) \
+    SC(GETPPID, getppid) \
+    SC(GETTID, gettid) \
+    SC(GETUID, getuid) \
+    SC(GETEUID, geteuid) \
+    SC(GETGID, getgid) \
+    SC(GETEGID, getegid)
 
 enum SystemCalls : uint64_t {
 #define ENUMERATE_CALL(u, l) SYSCALL_##u,

@@ -114,4 +114,37 @@ namespace mlibc {
         return 0; // unsupported by the kernel, so just say it always is
     }
 
+    pid_t Sysdeps<GetPid>::operator()() {
+        return syscall(SYSCALL_GETPID);
+    }
+
+    pid_t Sysdeps<GetPpid>::operator()() {
+        return syscall(SYSCALL_GETPPID);
+    }
+
+    int Sysdeps<FutexTid>::operator()() {
+        return syscall(SYSCALL_GETTID);
+    }
+
+    pid_t Sysdeps<GetTid>::operator()() {
+        return syscall(SYSCALL_GETTID);
+    }
+
+    uid_t Sysdeps<GetUid>::operator()() {
+        return syscall(SYSCALL_GETUID);
+    }
+
+    uid_t Sysdeps<GetEuid>::operator()() {
+        return syscall(SYSCALL_GETEUID);
+    }
+
+    uid_t Sysdeps<GetGid>::operator()() {
+        return syscall(SYSCALL_GETGID);
+    }
+
+    uid_t Sysdeps<GetEgid>::operator()() {
+        return syscall(SYSCALL_GETEGID);
+    }
+
+
 }

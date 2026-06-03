@@ -21,7 +21,15 @@ struct FrostyOSSysdepTags :
     VmMap,
     VmUnmap,
     TcbSet,
-    Isatty
+    Isatty,
+    GetPid,
+    GetPpid,
+    FutexTid,
+    GetTid,
+    GetUid,
+    GetEuid,
+    GetGid,
+    GetEgid
 {};
 
 template<typename Tag>
