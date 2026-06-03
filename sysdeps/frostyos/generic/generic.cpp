@@ -1,0 +1,117 @@
+#include <bits/ensure.h>
+#include <mlibc/debug.hpp>
+#include <mlibc/all-sysdeps.hpp>
+#include <errno.h>
+#include <frostyos/syscall.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+#define STUB()                                                                                     \
+    ({                                                                                             \
+        __ensure(!"STUB function was called");                                                     \
+        __builtin_unreachable();                                                                   \
+    })
+
+namespace mlibc {
+    [[noreturn]] void Sysdeps<Exit>::operator()(int status) {
+        syscall(SYSCALL_EXIT, status);
+        __builtin_unreachable();
+    }
+
+    int Sysdeps<FutexWait>::operator()(int *pointer, int expected, const struct timespec *time) {
+        // STUB();
+    }
+
+	int Sysdeps<FutexWake>::operator()(int *pointer, bool all) {
+        // STUB();
+    }
+
+    int Sysdeps<Open>::operator()(const char *pathname, int flags, mode_t mode, int *fd) {
+		long rc = syscall(SYSCALL_OPEN, (uint64_t)pathname, strlen(pathname), flags, mode);
+        if (rc < 0)
+            return rc;
+        *fd = rc;
+        return 0;
+	};
+
+    int Sysdeps<Read>::operator()(int fd, void *buff, size_t count, ssize_t *bytes_read) {
+        long rc = syscall(SYSCALL_READ, fd, (uint64_t)buff, count);
+        if (rc < 0)
+            return rc;
+		*bytes_read = rc;
+		return 0;
+	}
+
+	int Sysdeps<Write>::operator()(int fd, const void *buff, size_t count, ssize_t *bytes_written) {
+		long rc = syscall(SYSCALL_WRITE, fd, (uint64_t)buff, count);
+        if (rc < 0)
+            return rc;
+		*bytes_written = rc;
+		return 0;
+	}
+
+	int Sysdeps<Seek>::operator()(int fd, off_t offset, int whence, off_t *new_offset) {
+		off_t ret = syscall(SYSCALL_SEEK, fd, offset, whence);
+        if (ret < 0)
+            return ret;
+        *new_offset = ret;
+        return 0;
+	}
+
+	int Sysdeps<Close>::operator()(int fd) {
+		return syscall(SYSCALL_CLOSE, fd);
+	}
+
+    int Sysdeps<ClockGet>::operator()(int clock, time_t *secs, long *nanos) {
+        STUB();
+    }
+
+    void Sysdeps<LibcLog>::operator()(const char *message) {
+        ssize_t bytes;
+		sysdep<Write>(FROSTYOS_DEBUGFD, message, strlen(message), &bytes);
+	}
+
+	[[noreturn]] void Sysdeps<LibcPanic>::operator()() {
+		sysdep<LibcLog>("mlibc: panic");
+		sysdep<Exit>(1);
+	}
+
+    int Sysdeps<AnonAllocate>::operator()(size_t size, void **pointer) {
+		size += 4096 - (size % 4096);
+		return sysdep<VmMap>(NULL, size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, 0, 0, pointer);
+	}
+
+	int Sysdeps<AnonFree>::operator()(void *pointer, size_t size) {
+		size += 4096 - (size % 4096);
+		return sysdep<VmUnmap>(pointer, size);
+	}
+
+    struct [[gnu::packed]] sys_mmapExtraArgs {
+        int fd;
+        off_t offset;
+    };
+
+    int Sysdeps<VmMap>::operator()(void *hint, size_t size, int prot, int flags, int fd, off_t offset, void **window) {
+        sys_mmapExtraArgs args = {fd, offset};
+		long rc = syscall(SYSCALL_MMAP, (uint64_t)hint, size, prot, flags, (uint64_t)&args);
+        if (rc < 0)
+            return rc;
+		*window = (void *)rc;
+		return 0;
+	}
+
+	int Sysdeps<VmUnmap>::operator()(void *pointer, size_t size) {
+		return syscall(SYSCALL_MUNMAP, (uintptr_t)pointer, size);
+	}
+
+    int Sysdeps<TcbSet>::operator()(void *pointer) {
+        return syscall(SYSCALL_SETTCB, (uintptr_t)pointer);
+    }
+
+    int Sysdeps<Isatty>::operator()(int fd) {
+        (void)fd;
+        return 0; // unsupported by the kernel, so just say it always is
+    }
+
+}
