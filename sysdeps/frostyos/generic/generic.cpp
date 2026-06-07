@@ -116,8 +116,7 @@ namespace mlibc {
     }
 
     int Sysdeps<Isatty>::operator()(int fd) {
-        (void)fd;
-        return 0; // unsupported by the kernel, so just say it always is
+        return syscall(SYSCALL_ISATTY, fd);
     }
 
     pid_t Sysdeps<GetPid>::operator()() {
