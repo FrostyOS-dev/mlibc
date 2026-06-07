@@ -64,7 +64,13 @@ namespace mlibc {
 	}
 
     int Sysdeps<ClockGet>::operator()(int clock, time_t *secs, long *nanos) {
-        STUB();
+        timespec t;
+        int rc = syscall(SYSCALL_CLOCKGET, clock, (uint64_t)&t);
+        if (rc < 0)
+            return rc;
+        *secs = t.tv_sec;
+        *nanos = t.tv_nsec;
+        return 0;
     }
 
     void Sysdeps<LibcLog>::operator()(const char *message) {
