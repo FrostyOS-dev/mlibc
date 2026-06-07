@@ -29,7 +29,9 @@ struct FrostyOSSysdepTags :
     GetUid,
     GetEuid,
     GetGid,
-    GetEgid
+    GetEgid,
+    OpenDir,
+    ReadEntries
 {};
 
 template<typename Tag>

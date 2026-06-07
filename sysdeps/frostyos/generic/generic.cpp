@@ -1,8 +1,9 @@
 #include <bits/ensure.h>
 #include <mlibc/debug.hpp>
 #include <mlibc/all-sysdeps.hpp>
-#include <errno.h>
 #include <frostyos/syscall.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -149,6 +150,14 @@ namespace mlibc {
 
     uid_t Sysdeps<GetEgid>::operator()() {
         return syscall(SYSCALL_GETEGID);
+    }
+
+    int Sysdeps<OpenDir>::operator()(const char *path, int* handle) {
+        return sysdep<Open>(path, O_DIRECTORY, 0, handle);
+    }
+
+    int Sysdeps<ReadEntries>::operator()(int handle, void* buffer, size_t max_size, size_t* bytes_read) {
+        return syscall(SYSCALL_GETDENTS, handle, (uint64_t)buffer, max_size, (uint64_t)bytes_read);
     }
 
 
