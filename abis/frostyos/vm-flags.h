@@ -8,8 +8,9 @@
 #define PROT_EXEC 4
 
 #define MAP_PRIVATE 1
-#define MAP_ANONYMOUS 2
+#define MAP_SHARED 2
+#define MAP_ANONYMOUS 4
 #define MAP_ANON MAP_ANONYMOUS
-#define MAP_FIXED 4
+#define MAP_FIXED 8
 
 #endif /* _ABIBITS_MMAP_FLAGS_H */
