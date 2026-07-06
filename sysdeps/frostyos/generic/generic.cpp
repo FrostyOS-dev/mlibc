@@ -112,6 +112,10 @@ namespace mlibc {
 		return syscall(SYSCALL_MUNMAP, (uintptr_t)pointer, size);
 	}
 
+    int Sysdeps<VmProtect>::operator()(void *pointer, size_t size, int prot) {
+		return -syscall(SYSCALL_MPROTECT, (uint64_t)pointer, size, prot);
+	}
+
     int Sysdeps<TcbSet>::operator()(void *pointer) {
         return syscall(SYSCALL_SETTCB, (uintptr_t)pointer);
     }

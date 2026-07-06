@@ -20,6 +20,7 @@ struct FrostyOSSysdepTags :
     AnonFree,
     VmMap,
     VmUnmap,
+    VmProtect,
     TcbSet,
     Isatty,
     GetPid,
