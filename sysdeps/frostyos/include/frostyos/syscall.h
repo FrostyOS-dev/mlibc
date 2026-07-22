@@ -24,7 +24,8 @@
     SC(GETEGID, getegid) \
     SC(CLOCKGET, clockget) \
     SC(ISATTY, isatty) \
-    SC(GETDENTS, getdents)
+    SC(GETDENTS, getdents) \
+    SC(FORK, fork)
 
 enum SystemCalls : uint64_t {
 #define ENUMERATE_CALL(u, l) SYSCALL_##u,

@@ -164,5 +164,13 @@ namespace mlibc {
         return syscall(SYSCALL_GETDENTS, handle, (uint64_t)buffer, max_size, (uint64_t)bytes_read);
     }
 
+    int Sysdeps<Fork>::operator()(pid_t *pid) {
+		long rc = syscall(SYSCALL_FORK);
+		if (rc < 0)
+            return -rc;
+        *pid = rc;
+        return 0;
+	}
+
 
 }
