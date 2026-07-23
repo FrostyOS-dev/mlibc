@@ -77,6 +77,7 @@ namespace mlibc {
     void Sysdeps<LibcLog>::operator()(const char *message) {
         ssize_t bytes;
 		sysdep<Write>(FROSTYOS_DEBUGFD, message, strlen(message), &bytes);
+        sysdep<Write>(FROSTYOS_DEBUGFD, "\n", 1, &bytes);
 	}
 
 	[[noreturn]] void Sysdeps<LibcPanic>::operator()() {

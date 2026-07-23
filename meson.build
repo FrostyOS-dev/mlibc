@@ -293,6 +293,9 @@ elif host_machine.system() == 'zinnia'
 elif host_machine.system() == 'frostyos'
 	rtld_include_dirs += include_directories('sysdeps/frostyos/include')
 	libc_include_dirs += include_directories('sysdeps/frostyos/include')
+	internal_conf.set10('MLIBC_MAP_DSO_SEGMENTS', true)
+	internal_conf.set10('MLIBC_MMAP_ALLOCATE_DSO', false)
+	internal_conf.set10('MLIBC_MAP_FILE_WINDOWS', true)
 	subdir('sysdeps/frostyos')
 # ANCHOR: demo-sysdeps
 elif host_machine.system() == 'demo'
