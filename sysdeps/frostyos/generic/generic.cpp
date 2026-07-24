@@ -173,5 +173,12 @@ namespace mlibc {
         return 0;
 	}
 
+    int Sysdeps<Execve>::operator()(const char *path, char *const *argv, char *const *envp) {
+        long rc = syscall(SYSCALL_EXEC, (uint64_t)path, (uint64_t)argv, (uint64_t)envp);
+		if (rc < 0)
+            return -rc;
+        return 0;
+    }
+
 
 }
