@@ -26,7 +26,8 @@
     SC(ISATTY, isatty) \
     SC(GETDENTS, getdents) \
     SC(FORK, fork) \
-    SC(EXEC, exec)
+    SC(EXEC, exec) \
+    SC(FUTEX, futex)
 
 enum SystemCalls : uint64_t {
 #define ENUMERATE_CALL(u, l) SYSCALL_##u,

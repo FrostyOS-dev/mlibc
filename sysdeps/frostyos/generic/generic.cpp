@@ -20,12 +20,21 @@ namespace mlibc {
         __builtin_unreachable();
     }
 
+    #define FUTEX_WAIT 0
+    #define FUTEX_WAKE 1
+
     int Sysdeps<FutexWait>::operator()(int *pointer, int expected, const struct timespec *time) {
-        // STUB();
+        int rc = syscall(SYSCALL_FUTEX, FUTEX_WAIT, (uint64_t)pointer, expected, (uint64_t)time);
+        if (rc < 0)
+            return -rc;
+        return 0;
     }
 
 	int Sysdeps<FutexWake>::operator()(int *pointer, bool all) {
-        // STUB();
+        int rc = syscall(SYSCALL_FUTEX, FUTEX_WAKE, (uint64_t)pointer, all ? INT32_MAX : 1);
+        if (rc < 0)
+            return -rc;
+        return 0;
     }
 
     int Sysdeps<Open>::operator()(const char *pathname, int flags, mode_t mode, int *fd) {
