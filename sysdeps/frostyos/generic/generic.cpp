@@ -1,3 +1,4 @@
+#include "mlibc/sysdep-tags.hpp"
 #include <bits/ensure.h>
 #include <mlibc/debug.hpp>
 #include <mlibc/all-sysdeps.hpp>
@@ -15,6 +16,19 @@
     })
 
 namespace mlibc {
+
+    struct UIDs {
+        uid_t ruid;
+        uid_t euid;
+        uid_t suid;
+    };
+
+    struct GIDs {
+        gid_t rgid;
+        gid_t egid;
+        gid_t sgid;
+    };
+
     [[noreturn]] void Sysdeps<Exit>::operator()(int status) {
         syscall(SYSCALL_EXIT, status);
         __builtin_unreachable();
@@ -151,19 +165,35 @@ namespace mlibc {
     }
 
     uid_t Sysdeps<GetUid>::operator()() {
-        return syscall(SYSCALL_GETUID);
+        UIDs uids = {};
+        int rc = syscall(SYSCALL_GETRESUID, (uint64_t)&uids);
+        if (rc < 0)
+            return rc;
+        return uids.ruid;
     }
 
     uid_t Sysdeps<GetEuid>::operator()() {
-        return syscall(SYSCALL_GETEUID);
+        UIDs uids = {};
+        int rc = syscall(SYSCALL_GETRESUID, (uint64_t)&uids);
+        if (rc < 0)
+            return rc;
+        return uids.euid;
     }
 
     uid_t Sysdeps<GetGid>::operator()() {
-        return syscall(SYSCALL_GETGID);
+        GIDs gids = {};
+        int rc = syscall(SYSCALL_GETRESGID, (uint64_t)&gids);
+        if (rc < 0)
+            return rc;
+        return gids.rgid;
     }
 
     uid_t Sysdeps<GetEgid>::operator()() {
-        return syscall(SYSCALL_GETEGID);
+        GIDs gids = {};
+        int rc = syscall(SYSCALL_GETRESGID, (uint64_t)&gids);
+        if (rc < 0)
+            return rc;
+        return gids.egid;
     }
 
     int Sysdeps<OpenDir>::operator()(const char *path, int* handle) {
@@ -186,6 +216,49 @@ namespace mlibc {
         long rc = syscall(SYSCALL_EXEC, (uint64_t)path, (uint64_t)argv, (uint64_t)envp);
 		if (rc < 0)
             return -rc;
+        return 0;
+    }
+
+    int Sysdeps<GetCwd>::operator()(char* buffer, size_t size) {
+        long rc = syscall(SYSCALL_GETCWD, (uint64_t)buffer, size);
+        if (rc < 0)
+            return -rc;
+        return 0;
+    }
+
+    int Sysdeps<GetResuid>::operator()(uid_t* ruid, uid_t* euid, uid_t* suid) {
+        UIDs uids = {};
+        long rc = syscall(SYSCALL_GETRESUID, (uint64_t)&uids);
+        if (rc < 0)
+            return -rc;
+        *ruid = uids.ruid;
+        *euid = uids.euid;
+        *suid = uids.suid;
+        return 0;
+    }
+
+    int Sysdeps<GetResgid>::operator()(gid_t* rgid, gid_t* egid, gid_t* sgid) {
+        GIDs gids = {};
+        long rc = syscall(SYSCALL_GETRESGID, (uint64_t)&gids);
+        if (rc < 0)
+            return -rc;
+        *rgid = gids.rgid;
+        *egid = gids.egid;
+        *sgid = gids.sgid;
+        return 0;
+    }
+
+    int Sysdeps<Ttyname>::operator()(int fd, char *buf, size_t size) {
+        (void)fd;
+        (void)buf;
+        (void)size;
+        return 0;
+    }
+
+    int Sysdeps<Sigprocmask>::operator()(int how, const sigset_t *__restrict set, sigset_t *__restrict retrieve) {
+        (void)how;
+        (void)set;
+        (void)retrieve;
         return 0;
     }
 

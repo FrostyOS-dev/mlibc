@@ -18,16 +18,15 @@
     SC(GETPID, getpid) \
     SC(GETPPID, getppid) \
     SC(GETTID, gettid) \
-    SC(GETUID, getuid) \
-    SC(GETEUID, geteuid) \
-    SC(GETGID, getgid) \
-    SC(GETEGID, getegid) \
+    SC(GETRESUID, getresuid) \
+    SC(GETRESGID, getresgid) \
     SC(CLOCKGET, clockget) \
     SC(ISATTY, isatty) \
     SC(GETDENTS, getdents) \
     SC(FORK, fork) \
     SC(EXEC, exec) \
-    SC(FUTEX, futex)
+    SC(FUTEX, futex) \
+    SC(GETCWD, getcwd)
 
 enum SystemCalls : uint64_t {
 #define ENUMERATE_CALL(u, l) SYSCALL_##u,
