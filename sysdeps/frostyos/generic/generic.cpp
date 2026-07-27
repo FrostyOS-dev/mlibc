@@ -8,6 +8,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #define STUB()                                                                                     \
     ({                                                                                             \
@@ -99,8 +100,8 @@ namespace mlibc {
 
     void Sysdeps<LibcLog>::operator()(const char *message) {
         ssize_t bytes;
-		sysdep<Write>(FROSTYOS_DEBUGFD, message, strlen(message), &bytes);
-        sysdep<Write>(FROSTYOS_DEBUGFD, "\n", 1, &bytes);
+		sysdep<Write>(STDERR_FILENO, message, strlen(message), &bytes);
+        sysdep<Write>(STDERR_FILENO, "\n", 1, &bytes);
 	}
 
 	[[noreturn]] void Sysdeps<LibcPanic>::operator()() {
@@ -205,7 +206,7 @@ namespace mlibc {
     }
 
     int Sysdeps<Fork>::operator()(pid_t *pid) {
-		long rc = syscall(SYSCALL_FORK);
+		int rc = syscall(SYSCALL_FORK);
 		if (rc < 0)
             return -rc;
         *pid = rc;
@@ -213,10 +214,11 @@ namespace mlibc {
 	}
 
     int Sysdeps<Execve>::operator()(const char *path, char *const *argv, char *const *envp) {
-        long rc = syscall(SYSCALL_EXEC, (uint64_t)path, (uint64_t)argv, (uint64_t)envp);
+        int rc = syscall(SYSCALL_EXEC, (uint64_t)path, (uint64_t)argv, (uint64_t)envp);
 		if (rc < 0)
             return -rc;
-        return 0;
+        sysdep<LibcLog>("SYSCALL_EXEC returned!");
+        sysdep<LibcPanic>();
     }
 
     int Sysdeps<GetCwd>::operator()(char* buffer, size_t size) {
@@ -228,7 +230,7 @@ namespace mlibc {
 
     int Sysdeps<GetResuid>::operator()(uid_t* ruid, uid_t* euid, uid_t* suid) {
         UIDs uids = {};
-        long rc = syscall(SYSCALL_GETRESUID, (uint64_t)&uids);
+        int rc = syscall(SYSCALL_GETRESUID, (uint64_t)&uids);
         if (rc < 0)
             return -rc;
         *ruid = uids.ruid;
@@ -239,7 +241,7 @@ namespace mlibc {
 
     int Sysdeps<GetResgid>::operator()(gid_t* rgid, gid_t* egid, gid_t* sgid) {
         GIDs gids = {};
-        long rc = syscall(SYSCALL_GETRESGID, (uint64_t)&gids);
+        int rc = syscall(SYSCALL_GETRESGID, (uint64_t)&gids);
         if (rc < 0)
             return -rc;
         *rgid = gids.rgid;
