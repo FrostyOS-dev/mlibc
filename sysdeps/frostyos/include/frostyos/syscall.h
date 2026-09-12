@@ -26,7 +26,8 @@
     SC(FORK, fork) \
     SC(EXEC, exec) \
     SC(FUTEX, futex) \
-    SC(GETCWD, getcwd)
+    SC(GETCWD, getcwd) \
+    SC(SYMLINK, symlink)
 
 enum SystemCalls : uint64_t {
 #define ENUMERATE_CALL(u, l) SYSCALL_##u,

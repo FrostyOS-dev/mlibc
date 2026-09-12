@@ -264,5 +264,12 @@ namespace mlibc {
         return 0;
     }
 
+    int Sysdeps<Symlink>::operator()(const char* target_path, const char* link_path) {
+        int rc = syscall(SYSCALL_SYMLINK, (uint64_t)target_path, strlen(target_path), (uint64_t)link_path, strlen(link_path));
+        if (rc < 0)
+            return -rc;
+        return 0;
+    }
+
 
 }

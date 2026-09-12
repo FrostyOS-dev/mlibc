@@ -39,7 +39,8 @@ struct FrostyOSSysdepTags :
     GetResuid,
     GetResgid,
     Ttyname,
-    Sigprocmask
+    Sigprocmask,
+    Symlink
 {};
 
 template<typename Tag>
