@@ -27,7 +27,12 @@
     SC(EXEC, exec) \
     SC(FUTEX, futex) \
     SC(GETCWD, getcwd) \
-    SC(SYMLINK, symlink)
+    SC(SYMLINK, symlink) \
+    SC(SIGACTION, sigaction) \
+    SC(SIGPENDING, sigpending) \
+    SC(SIGPROCMASK, sigprocmask) \
+    SC(SIGRETURN, sigreturn) \
+    SC(KILL, kill)
 
 enum SystemCalls : uint64_t {
 #define ENUMERATE_CALL(u, l) SYSCALL_##u,

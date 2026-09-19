@@ -257,10 +257,10 @@ namespace mlibc {
         return 0;
     }
 
-    int Sysdeps<Sigprocmask>::operator()(int how, const sigset_t *__restrict set, sigset_t *__restrict retrieve) {
-        (void)how;
-        (void)set;
-        (void)retrieve;
+    int Sysdeps<Sigprocmask>::operator()(int how, const sigset_t* __restrict set, sigset_t* __restrict retrieve) {
+        int rc = syscall(SYSCALL_SIGPROCMASK, how, (uint64_t)set, (uint64_t)retrieve);
+        if (rc < 0)
+            return -rc;
         return 0;
     }
 
@@ -270,6 +270,41 @@ namespace mlibc {
             return -rc;
         return 0;
     }
+
+    int Sysdeps<Kill>::operator()(pid_t pid, int signal) {
+        int rc = syscall(SYSCALL_KILL, pid, signal);
+        if (rc < 0)
+            return -rc;
+        return 0;
+    }
+
+    int Sysdeps<Sigpending>::operator()(sigset_t* set) {
+        int rc = syscall(SYSCALL_SIGPENDING, (uint64_t)set);
+        if (rc < 0)
+            return -rc;
+        return 0;
+    }
+
+#ifndef MLIBC_BUILDING_RTLD
+    extern "C" void __mlibc_restorer();
+
+    int Sysdeps<Sigaction>::operator()(int sig, const struct sigaction* __restrict act, struct sigaction* __restrict oldact) {
+        struct sigaction newAction;
+        if (act != nullptr)
+            memcpy(&newAction, act, sizeof(struct sigaction));
+
+        if (act != nullptr && (newAction.sa_flags & SA_RESTORER) == 0) {
+            newAction.sa_restorer = __mlibc_restorer;
+            newAction.sa_flags |= SA_RESTORER;
+        }
+
+        int rc = syscall(SYSCALL_SIGACTION, sig, act != nullptr ? (uint64_t)&newAction : 0, (uint64_t)oldact);
+        if (rc < 0)
+            return -rc;
+        return 0;
+    }
+
+#endif
 
 
 }

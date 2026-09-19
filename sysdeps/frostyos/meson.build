@@ -10,7 +10,8 @@ rtld_sources += files(
 
 libc_sources += files(
 	'generic/entry.cpp',
-	'generic/generic.cpp'
+	'generic/generic.cpp',
+    host_machine.cpu_family() + '/Signal.S'
 )
 # libc_include_dirs += include_directories('include')
 
@@ -80,7 +81,7 @@ if not headers_only
 	crt = custom_target('crt1',
 		build_by_default: true,
 		command: c_compiler.cmd_array() + ['-c', '-o', '@OUTPUT@', '@INPUT@'],
-		input: 'crt-x86_64/crt1.S',
+		input: 'x86_64/crt1.S',
 		output: 'crt1.o',
 		install: true,
 		install_dir: get_option('libdir')
@@ -89,7 +90,7 @@ if not headers_only
 	crt_pie = custom_target('Scrt1',
 		build_by_default: true,
 		command: c_compiler.cmd_array() + ['-c', '-o', '@OUTPUT@', '@INPUT@'],
-		input: 'crt-x86_64/crt1.S',
+		input: 'x86_64/crt1.S',
 		output: 'Scrt1.o',
 		install: true,
 		install_dir: get_option('libdir')
@@ -98,7 +99,7 @@ if not headers_only
 	custom_target('crti',
 		build_by_default: true,
 		command: c_compiler.cmd_array() + ['-c', '-o', '@OUTPUT@', '@INPUT@'],
-		input: 'crt-x86_64/crti.S',
+		input: 'x86_64/crti.S',
 		output: 'crti.o',
 		install: true,
 		install_dir: get_option('libdir')
@@ -107,7 +108,7 @@ if not headers_only
 	custom_target('crtn',
 		build_by_default: true,
 		command: c_compiler.cmd_array() + ['-c', '-o', '@OUTPUT@', '@INPUT@'],
-		input: 'crt-x86_64/crtn.S',
+		input: 'x86_64/crtn.S',
 		output: 'crtn.o',
 		install: true,
 		install_dir: get_option('libdir')

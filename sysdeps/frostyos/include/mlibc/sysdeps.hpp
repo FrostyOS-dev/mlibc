@@ -40,7 +40,10 @@ struct FrostyOSSysdepTags :
     GetResgid,
     Ttyname,
     Sigprocmask,
-    Symlink
+    Symlink,
+    Kill,
+    Sigpending,
+    Sigaction
 {};
 
 template<typename Tag>
