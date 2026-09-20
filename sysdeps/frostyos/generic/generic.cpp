@@ -134,19 +134,31 @@ namespace mlibc {
 	}
 
 	int Sysdeps<VmUnmap>::operator()(void *pointer, size_t size) {
-		return syscall(SYSCALL_MUNMAP, (uintptr_t)pointer, size);
+		long rc = syscall(SYSCALL_MUNMAP, (uintptr_t)pointer, size);
+        if (rc < 0)
+            return -rc;
+        return 0;
 	}
 
     int Sysdeps<VmProtect>::operator()(void *pointer, size_t size, int prot) {
-		return -syscall(SYSCALL_MPROTECT, (uint64_t)pointer, size, prot);
+		long rc = syscall(SYSCALL_MPROTECT, (uint64_t)pointer, size, prot);
+        if (rc < 0)
+            return -rc;
+        return 0;
 	}
 
     int Sysdeps<TcbSet>::operator()(void *pointer) {
-        return syscall(SYSCALL_SETTCB, (uintptr_t)pointer);
+        long rc = syscall(SYSCALL_SETTCB, (uintptr_t)pointer);
+        if (rc < 0)
+            return -rc;
+        return 0;
     }
 
     int Sysdeps<Isatty>::operator()(int fd) {
-        return syscall(SYSCALL_ISATTY, fd);
+        long rc = syscall(SYSCALL_ISATTY, fd);
+        if (rc < 0)
+            return -rc;
+        return 0;
     }
 
     pid_t Sysdeps<GetPid>::operator()() {
@@ -167,7 +179,7 @@ namespace mlibc {
 
     uid_t Sysdeps<GetUid>::operator()() {
         UIDs uids = {};
-        int rc = syscall(SYSCALL_GETRESUID, (uint64_t)&uids);
+        long rc = syscall(SYSCALL_GETRESUID, (uint64_t)&uids);
         if (rc < 0)
             return rc;
         return uids.ruid;
@@ -175,7 +187,7 @@ namespace mlibc {
 
     uid_t Sysdeps<GetEuid>::operator()() {
         UIDs uids = {};
-        int rc = syscall(SYSCALL_GETRESUID, (uint64_t)&uids);
+        long rc = syscall(SYSCALL_GETRESUID, (uint64_t)&uids);
         if (rc < 0)
             return rc;
         return uids.euid;
@@ -183,7 +195,7 @@ namespace mlibc {
 
     uid_t Sysdeps<GetGid>::operator()() {
         GIDs gids = {};
-        int rc = syscall(SYSCALL_GETRESGID, (uint64_t)&gids);
+        long rc = syscall(SYSCALL_GETRESGID, (uint64_t)&gids);
         if (rc < 0)
             return rc;
         return gids.rgid;
@@ -191,7 +203,7 @@ namespace mlibc {
 
     uid_t Sysdeps<GetEgid>::operator()() {
         GIDs gids = {};
-        int rc = syscall(SYSCALL_GETRESGID, (uint64_t)&gids);
+        long rc = syscall(SYSCALL_GETRESGID, (uint64_t)&gids);
         if (rc < 0)
             return rc;
         return gids.egid;
@@ -202,11 +214,14 @@ namespace mlibc {
     }
 
     int Sysdeps<ReadEntries>::operator()(int handle, void* buffer, size_t max_size, size_t* bytes_read) {
-        return syscall(SYSCALL_GETDENTS, handle, (uint64_t)buffer, max_size, (uint64_t)bytes_read);
+        long rc = syscall(SYSCALL_GETDENTS, handle, (uint64_t)buffer, max_size, (uint64_t)bytes_read);
+        if (rc < 0)
+            return -rc;
+        return 0;
     }
 
     int Sysdeps<Fork>::operator()(pid_t *pid) {
-		int rc = syscall(SYSCALL_FORK);
+		long rc = syscall(SYSCALL_FORK);
 		if (rc < 0)
             return -rc;
         *pid = rc;
@@ -214,7 +229,7 @@ namespace mlibc {
 	}
 
     int Sysdeps<Execve>::operator()(const char *path, char *const *argv, char *const *envp) {
-        int rc = syscall(SYSCALL_EXEC, (uint64_t)path, (uint64_t)argv, (uint64_t)envp);
+        long rc = syscall(SYSCALL_EXEC, (uint64_t)path, (uint64_t)argv, (uint64_t)envp);
 		if (rc < 0)
             return -rc;
         sysdep<LibcLog>("SYSCALL_EXEC returned!");
@@ -230,7 +245,7 @@ namespace mlibc {
 
     int Sysdeps<GetResuid>::operator()(uid_t* ruid, uid_t* euid, uid_t* suid) {
         UIDs uids = {};
-        int rc = syscall(SYSCALL_GETRESUID, (uint64_t)&uids);
+        long rc = syscall(SYSCALL_GETRESUID, (uint64_t)&uids);
         if (rc < 0)
             return -rc;
         *ruid = uids.ruid;
@@ -241,7 +256,7 @@ namespace mlibc {
 
     int Sysdeps<GetResgid>::operator()(gid_t* rgid, gid_t* egid, gid_t* sgid) {
         GIDs gids = {};
-        int rc = syscall(SYSCALL_GETRESGID, (uint64_t)&gids);
+        long rc = syscall(SYSCALL_GETRESGID, (uint64_t)&gids);
         if (rc < 0)
             return -rc;
         *rgid = gids.rgid;
@@ -258,28 +273,28 @@ namespace mlibc {
     }
 
     int Sysdeps<Sigprocmask>::operator()(int how, const sigset_t* __restrict set, sigset_t* __restrict retrieve) {
-        int rc = syscall(SYSCALL_SIGPROCMASK, how, (uint64_t)set, (uint64_t)retrieve);
+        long rc = syscall(SYSCALL_SIGPROCMASK, how, (uint64_t)set, (uint64_t)retrieve);
         if (rc < 0)
             return -rc;
         return 0;
     }
 
     int Sysdeps<Symlink>::operator()(const char* target_path, const char* link_path) {
-        int rc = syscall(SYSCALL_SYMLINK, (uint64_t)target_path, strlen(target_path), (uint64_t)link_path, strlen(link_path));
+        long rc = syscall(SYSCALL_SYMLINK, (uint64_t)target_path, strlen(target_path), (uint64_t)link_path, strlen(link_path));
         if (rc < 0)
             return -rc;
         return 0;
     }
 
     int Sysdeps<Kill>::operator()(pid_t pid, int signal) {
-        int rc = syscall(SYSCALL_KILL, pid, signal);
+        long rc = syscall(SYSCALL_KILL, pid, signal);
         if (rc < 0)
             return -rc;
         return 0;
     }
 
     int Sysdeps<Sigpending>::operator()(sigset_t* set) {
-        int rc = syscall(SYSCALL_SIGPENDING, (uint64_t)set);
+        long rc = syscall(SYSCALL_SIGPENDING, (uint64_t)set);
         if (rc < 0)
             return -rc;
         return 0;
@@ -298,7 +313,7 @@ namespace mlibc {
             newAction.sa_flags |= SA_RESTORER;
         }
 
-        int rc = syscall(SYSCALL_SIGACTION, sig, act != nullptr ? (uint64_t)&newAction : 0, (uint64_t)oldact);
+        long rc = syscall(SYSCALL_SIGACTION, sig, act != nullptr ? (uint64_t)&newAction : 0, (uint64_t)oldact);
         if (rc < 0)
             return -rc;
         return 0;
