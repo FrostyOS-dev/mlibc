@@ -43,7 +43,8 @@ struct FrostyOSSysdepTags :
     Symlink,
     Kill,
     Sigpending,
-    Sigaction
+    Sigaction,
+    GetHostname
 {};
 
 template<typename Tag>

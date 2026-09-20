@@ -321,5 +321,13 @@ namespace mlibc {
 
 #endif
 
+    int Sysdeps<GetHostname>::operator()(char *buffer, size_t bufsize) {
+        if (buffer != nullptr && bufsize > 0) {
+            const char* host = "frostyos";
+            memcpy(buffer, host, 8 > bufsize ? bufsize : 8);
+        }
+        return 0;
+    }
+
 
 }
