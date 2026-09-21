@@ -3,6 +3,7 @@
 #include <mlibc/debug.hpp>
 #include <mlibc/all-sysdeps.hpp>
 #include <frostyos/syscall.h>
+#include <asm/ioctls.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <string.h>
@@ -341,6 +342,30 @@ namespace mlibc {
         if (rc < 0)
             return -rc;
         return 0;
+    }
+
+    int Sysdeps<Ioctl>::operator()(int fd, unsigned long request, void* arg, int* result) {
+        return syscall(SYSCALL_IOCTL, fd, request, (uint64_t)arg, (uint64_t)result);
+    }
+
+    int Sysdeps<Tcgetwinsize>::operator()(int fd, struct winsize* winsz) {
+        int res;
+        return sysdep<Ioctl>(fd, TIOCGWINSZ, (void*)winsz, &res);
+    }
+
+    int Sysdeps<Tcsetwinsize>::operator()(int fd, const struct winsize* winsz) {
+        int res;
+        return sysdep<Ioctl>(fd, TIOCSWINSZ, (void*)winsz, &res);
+    }
+
+    int Sysdeps<Tcgetattr>::operator()(int fd, struct termios* attr) {
+        int res;
+        return sysdep<Ioctl>(fd, TCGETS, (void*)attr, &res);
+    }
+
+    int Sysdeps<Tcsetattr>::operator()(int fd, int, const struct termios *attr) {
+        int res;
+        return sysdep<Ioctl>(fd, TCSETS, (void*)attr, &res);
     }
 
 }

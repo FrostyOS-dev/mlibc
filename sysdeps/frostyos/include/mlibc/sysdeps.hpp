@@ -46,7 +46,12 @@ struct FrostyOSSysdepTags :
     Sigaction,
     GetHostname,
     Chdir,
-    Fchdir
+    Fchdir,
+    Ioctl,
+    Tcgetwinsize,
+    Tcsetwinsize,
+    Tcgetattr,
+    Tcsetattr
 {};
 
 template<typename Tag>

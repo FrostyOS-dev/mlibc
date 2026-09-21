@@ -1,1 +1,1 @@
-../../../../abis/frostyos/ioctls.h
+../../../../abis/linux/ioctls.h
