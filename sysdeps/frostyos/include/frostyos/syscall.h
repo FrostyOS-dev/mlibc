@@ -35,7 +35,8 @@
     SC(KILL, kill) \
     SC(CHDIR, chdir) \
     SC(FCHDIR, fchdir) \
-    SC(IOCTL, ioctl)
+    SC(IOCTL, ioctl) \
+    SC(FSTATAT, fstatat)
 
 enum SystemCalls : uint64_t {
 #define ENUMERATE_CALL(u, l) SYSCALL_##u,

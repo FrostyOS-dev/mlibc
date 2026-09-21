@@ -17,6 +17,8 @@
         __builtin_unreachable();                                                                   \
     })
 
+#define AT_EMPTY_PATH 0x1000
+
 namespace mlibc {
 
     struct UIDs {
@@ -366,6 +368,26 @@ namespace mlibc {
     int Sysdeps<Tcsetattr>::operator()(int fd, int, const struct termios *attr) {
         int res;
         return sysdep<Ioctl>(fd, TCSETS, (void*)attr, &res);
+    }
+
+    int Sysdeps<Stat>::operator()(mlibc::fsfd_target fsfdt, int fd, const char* path, int flags, struct stat* statbuf) {
+        int rc;
+        switch (fsfdt) {
+        case mlibc::fsfd_target::path:
+            rc = syscall(SYSCALL_FSTATAT, AT_FDCWD, (uint64_t)path, strlen(path), (uint64_t)statbuf, flags);
+            break;
+        case mlibc::fsfd_target::fd:
+            rc = syscall(SYSCALL_FSTATAT, fd, 0, 0, (uint64_t)statbuf, AT_EMPTY_PATH);
+            break;
+        case mlibc::fsfd_target::fd_path:
+            rc = syscall(SYSCALL_FSTATAT, fd, (uint64_t)path, strlen(path), (uint64_t)statbuf, flags);
+            break;
+        default:
+            return ENOSYS;
+        }
+        if (rc < 0)
+            return -rc;
+        return 0;
     }
 
 }
