@@ -32,7 +32,9 @@
     SC(SIGPENDING, sigpending) \
     SC(SIGPROCMASK, sigprocmask) \
     SC(SIGRETURN, sigreturn) \
-    SC(KILL, kill)
+    SC(KILL, kill) \
+    SC(CHDIR, chdir) \
+    SC(FCHDIR, fchdir)
 
 enum SystemCalls : uint64_t {
 #define ENUMERATE_CALL(u, l) SYSCALL_##u,

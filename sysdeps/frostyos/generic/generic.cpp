@@ -53,9 +53,9 @@ namespace mlibc {
     }
 
     int Sysdeps<Open>::operator()(const char *pathname, int flags, mode_t mode, int *fd) {
-		long rc = syscall(SYSCALL_OPEN, (uint64_t)pathname, strlen(pathname), flags, mode);
+		int rc = syscall(SYSCALL_OPEN, (uint64_t)pathname, strlen(pathname), flags, mode);
         if (rc < 0)
-            return rc;
+            return -rc;
         *fd = rc;
         return 0;
 	};
