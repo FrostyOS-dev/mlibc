@@ -321,7 +321,7 @@ namespace mlibc {
 
 #endif
 
-    int Sysdeps<GetHostname>::operator()(char *buffer, size_t bufsize) {
+    int Sysdeps<GetHostname>::operator()(char* buffer, size_t bufsize) {
         if (buffer != nullptr && bufsize > 0) {
             const char* host = "frostyos";
             memcpy(buffer, host, 8 > bufsize ? bufsize : 8);
@@ -329,5 +329,18 @@ namespace mlibc {
         return 0;
     }
 
+    int Sysdeps<Chdir>::operator()(const char* path) {
+        long rc = syscall(SYSCALL_CHDIR, (uint64_t)path, strlen(path));
+        if (rc < 0)
+            return -rc;
+        return 0;
+    }
+
+    int Sysdeps<Fchdir>::operator()(int fd) {
+        long rc = syscall(SYSCALL_FCHDIR, fd);
+        if (rc < 0)
+            return -rc;
+        return 0;
+    }
 
 }

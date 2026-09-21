@@ -44,7 +44,9 @@ struct FrostyOSSysdepTags :
     Kill,
     Sigpending,
     Sigaction,
-    GetHostname
+    GetHostname,
+    Chdir,
+    Fchdir
 {};
 
 template<typename Tag>
