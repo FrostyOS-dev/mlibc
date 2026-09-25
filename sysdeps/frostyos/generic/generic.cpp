@@ -390,4 +390,13 @@ namespace mlibc {
         return 0;
     }
 
+    int Sysdeps<Waitpid>::operator()(pid_t pid, int* status, int flags, struct rusage*, pid_t* ret_pid) {
+        long rc = syscall(SYSCALL_WAITPID, (uint64_t)pid, (uint64_t)status, flags);
+        if (rc > 0 && ret_pid != nullptr) {
+            *ret_pid = rc;
+            return 0;
+        }
+        return -rc;
+    }
+
 }

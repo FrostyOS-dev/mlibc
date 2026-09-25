@@ -52,7 +52,8 @@ struct FrostyOSSysdepTags :
     Tcsetwinsize,
     Tcgetattr,
     Tcsetattr,
-    Stat
+    Stat,
+    Waitpid
 {};
 
 template<typename Tag>
