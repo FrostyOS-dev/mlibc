@@ -131,7 +131,7 @@ namespace mlibc {
         sys_mmapExtraArgs args = {fd, offset};
 		long rc = syscall(SYSCALL_MMAP, (uint64_t)hint, size, prot, flags, (uint64_t)&args);
         if (rc < 0)
-            return rc;
+            return -rc;
 		*window = (void *)rc;
 		return 0;
 	}
