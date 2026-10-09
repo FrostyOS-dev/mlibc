@@ -66,7 +66,7 @@ namespace mlibc {
     int Sysdeps<Read>::operator()(int fd, void *buff, size_t count, ssize_t *bytes_read) {
         long rc = syscall(SYSCALL_READ, fd, (uint64_t)buff, count);
         if (rc < 0)
-            return rc;
+            return -rc;
 		*bytes_read = rc;
 		return 0;
 	}
@@ -74,7 +74,7 @@ namespace mlibc {
 	int Sysdeps<Write>::operator()(int fd, const void *buff, size_t count, ssize_t *bytes_written) {
 		long rc = syscall(SYSCALL_WRITE, fd, (uint64_t)buff, count);
         if (rc < 0)
-            return rc;
+            return -rc;
 		*bytes_written = rc;
 		return 0;
 	}
@@ -82,7 +82,7 @@ namespace mlibc {
 	int Sysdeps<Seek>::operator()(int fd, off_t offset, int whence, off_t *new_offset) {
 		off_t ret = syscall(SYSCALL_SEEK, fd, offset, whence);
         if (ret < 0)
-            return ret;
+            return -ret;
         *new_offset = ret;
         return 0;
 	}
@@ -95,7 +95,7 @@ namespace mlibc {
         timespec t;
         int rc = syscall(SYSCALL_CLOCKGET, clock, (uint64_t)&t);
         if (rc < 0)
-            return rc;
+            return -rc;
         *secs = t.tv_sec;
         *nanos = t.tv_nsec;
         return 0;
