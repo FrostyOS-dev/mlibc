@@ -41,6 +41,7 @@ struct FrostyOSSysdepTags :
     Ttyname,
     Sigprocmask,
     Symlink,
+    Symlinkat,
     Kill,
     Sigpending,
     Sigaction,

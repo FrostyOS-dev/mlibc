@@ -283,7 +283,11 @@ namespace mlibc {
     }
 
     int Sysdeps<Symlink>::operator()(const char* target_path, const char* link_path) {
-        long rc = syscall(SYSCALL_SYMLINK, (uint64_t)target_path, strlen(target_path), (uint64_t)link_path, strlen(link_path));
+        return sysdep<Symlinkat>(target_path, AT_FDCWD, link_path);
+    }
+
+    int Sysdeps<Symlinkat>::operator()(const char* target_path, int dirfd, const char* link_path) {
+        int rc = syscall(SYSCALL_SYMLINKAT, dirfd, (uint64_t)target_path, strlen(target_path), (uint64_t)link_path, strlen(link_path));
         if (rc < 0)
             return -rc;
         return 0;

@@ -27,7 +27,7 @@
     SC(EXEC, exec) \
     SC(FUTEX, futex) \
     SC(GETCWD, getcwd) \
-    SC(SYMLINK, symlink) \
+    SC(SYMLINKAT, symlinkat) \
     SC(SIGACTION, sigaction) \
     SC(SIGPENDING, sigpending) \
     SC(SIGPROCMASK, sigprocmask) \
