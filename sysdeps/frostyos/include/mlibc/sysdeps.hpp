@@ -55,7 +55,9 @@ struct FrostyOSSysdepTags :
     Tcgetattr,
     Tcsetattr,
     Stat,
-    Waitpid
+    Waitpid,
+    Mkdir,
+    Mkdirat
 {};
 
 template<typename Tag>

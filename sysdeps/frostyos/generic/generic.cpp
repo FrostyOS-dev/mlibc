@@ -408,4 +408,15 @@ namespace mlibc {
         return -rc;
     }
 
+    int Sysdeps<Mkdir>::operator()(const char* path, mode_t mode) {
+        return sysdep<Mkdirat>(AT_FDCWD, path, mode);
+    }
+
+    int Sysdeps<Mkdirat>::operator()(int dirfd, const char* path, mode_t mode) {
+        int rc = syscall(SYSCALL_MKDIRAT, dirfd, (uint64_t)path, strlen(path), mode);
+        if (rc < 0)
+            return -rc;
+        return 0;
+    }
+
 }
