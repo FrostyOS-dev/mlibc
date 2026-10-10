@@ -354,6 +354,11 @@ namespace mlibc {
         return syscall(SYSCALL_IOCTL, fd, request, (uint64_t)arg, (uint64_t)result);
     }
 
+    int Sysdeps<GetPgid>::operator()(pid_t pid, pid_t *pgid) {
+        *pgid = pid;
+        return 0;
+    }
+
     int Sysdeps<Tcgetwinsize>::operator()(int fd, struct winsize* winsz) {
         int res;
         return sysdep<Ioctl>(fd, TIOCGWINSZ, (void*)winsz, &res);

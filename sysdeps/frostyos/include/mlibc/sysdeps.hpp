@@ -49,6 +49,7 @@ struct FrostyOSSysdepTags :
     Chdir,
     Fchdir,
     Ioctl,
+    GetPgid,
     Tcgetwinsize,
     Tcsetwinsize,
     Tcgetattr,
