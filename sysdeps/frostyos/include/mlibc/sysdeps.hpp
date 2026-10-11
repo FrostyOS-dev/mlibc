@@ -59,7 +59,8 @@ struct FrostyOSSysdepTags :
     Mkdir,
     Mkdirat,
     Poll,
-    Ppoll
+    Ppoll,
+    Pselect
 {};
 
 template<typename Tag>

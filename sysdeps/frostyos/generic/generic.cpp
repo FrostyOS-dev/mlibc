@@ -439,4 +439,66 @@ namespace mlibc {
         return 0;
     }
 
+#ifndef MLIBC_BUILDING_RTLD
+    int Sysdeps<Pselect>::operator()(int num_fds, fd_set* read_set, fd_set* write_set, fd_set* except_set, const struct timespec* timeout, const sigset_t* sigmask, int* num_events) {
+        pollfd* fds = (pollfd*)malloc(num_fds * sizeof(pollfd));
+        if (fds == nullptr)
+            return ENOMEM;
+
+        int count = 0;
+        for (int fd = 0; fd < num_fds; fd++) {
+            short events = 0;
+            if (read_set != nullptr && FD_ISSET(fd, read_set))
+                events |= POLLIN;
+
+            if (write_set != nullptr && FD_ISSET(fd, write_set))
+                events |= POLLOUT;
+
+            if (except_set != nullptr && FD_ISSET(fd, except_set))
+                events |= POLLPRI;
+
+            if (events != 0) {
+                fds[count].fd = fd;
+                fds[count].events = events;
+                fds[count].revents = 0;
+                count++;
+            }
+        }
+
+        int num;
+        int err = sysdep<Ppoll>(fds, count, timeout, sigmask, &num);
+
+        if (err > 0) {
+            free(fds);
+            return err;
+        }
+
+        int returnCount = 0;
+        for (int i = 0; i < count; i++) {
+            int events = fds[i].events;
+            if ((events & POLLIN) > 0 && (fds[i].revents & (POLLIN | POLLHUP | POLLERR)) == 0) {
+                FD_CLR(fds[i].fd, read_set);
+                events &= ~POLLIN;
+            }
+
+            if ((events & POLLOUT) > 0 && (fds[i].revents & (POLLOUT | POLLERR)) == 0) {
+                FD_CLR(fds[i].fd, write_set);
+                events &= ~POLLOUT;
+            }
+
+            if ((events & POLLPRI) > 0 && (fds[i].revents & POLLPRI) == 0) {
+                FD_CLR(fds[i].fd, except_set);
+                events &= ~POLLPRI;
+            }
+
+            if (events > 0)
+                returnCount++;
+        }
+
+        *num_events = returnCount;
+        free(fds);
+        return 0;
+    }
+#endif
+
 }
