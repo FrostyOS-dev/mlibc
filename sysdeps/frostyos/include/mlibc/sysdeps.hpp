@@ -57,7 +57,9 @@ struct FrostyOSSysdepTags :
     Stat,
     Waitpid,
     Mkdir,
-    Mkdirat
+    Mkdirat,
+    Poll,
+    Ppoll
 {};
 
 template<typename Tag>

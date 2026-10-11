@@ -419,4 +419,24 @@ namespace mlibc {
         return 0;
     }
 
+    int Sysdeps<Poll>::operator()(struct pollfd* fds, nfds_t count, int timeout, int* num_events) {
+        int rc = syscall(SYSCALL_POLL, (uint64_t)fds, count, timeout);
+        if (rc < 0) {
+            *num_events = 0;
+            return -rc;
+        }
+        *num_events = rc;
+        return 0;
+    }
+
+    int Sysdeps<Ppoll>::operator()(struct pollfd* fds, nfds_t count, const struct timespec* ts, const sigset_t* mask, int* num_events) {
+        int rc = syscall(SYSCALL_PPOLL, (uint64_t)fds, count, (uint64_t)ts, (uint64_t)mask);
+        if (rc < 0) {
+            *num_events = 0;
+            return -rc;
+        }
+        *num_events = rc;
+        return 0;
+    }
+
 }

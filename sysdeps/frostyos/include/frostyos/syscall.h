@@ -38,7 +38,9 @@
     SC(IOCTL, ioctl) \
     SC(FSTATAT, fstatat) \
     SC(WAITPID, waitpid) \
-    SC(MKDIRAT, mkdirat)
+    SC(MKDIRAT, mkdirat) \
+    SC(POLL, poll) \
+    SC(PPOLL, ppoll)
 
 enum SystemCalls : uint64_t {
 #define ENUMERATE_CALL(u, l) SYSCALL_##u,
