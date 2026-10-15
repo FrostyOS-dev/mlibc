@@ -40,7 +40,11 @@
     SC(WAITPID, waitpid) \
     SC(MKDIRAT, mkdirat) \
     SC(POLL, poll) \
-    SC(PPOLL, ppoll)
+    SC(PPOLL, ppoll) \
+    SC(FCHMODAT, fchmodat) \
+    SC(FCHOWNAT, fchownat) \
+    SC(SETRESUID, setresuid) \
+    SC(SETRESGID, setresgid)
 
 enum SystemCalls : uint64_t {
 #define ENUMERATE_CALL(u, l) SYSCALL_##u,

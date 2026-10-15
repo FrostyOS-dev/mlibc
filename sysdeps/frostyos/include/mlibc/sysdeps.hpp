@@ -60,7 +60,17 @@ struct FrostyOSSysdepTags :
     Mkdirat,
     Poll,
     Ppoll,
-    Pselect
+    Pselect,
+    Chmod,
+    Fchmod,
+    Fchmodat,
+    Fchownat,
+    SetResuid,
+    SetResgid,
+    SetUid,
+    SetEuid,
+    SetGid,
+    SetEgid
 {};
 
 template<typename Tag>

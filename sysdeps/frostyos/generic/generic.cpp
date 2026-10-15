@@ -33,6 +33,11 @@ namespace mlibc {
         gid_t sgid;
     };
 
+    struct UGIDs {
+        uid_t owner;
+        gid_t group;
+    };
+
     [[noreturn]] void Sysdeps<Exit>::operator()(int status) {
         syscall(SYSCALL_EXIT, status);
         __builtin_unreachable();
@@ -232,7 +237,7 @@ namespace mlibc {
 	}
 
     int Sysdeps<Execve>::operator()(const char *path, char *const *argv, char *const *envp) {
-        long rc = syscall(SYSCALL_EXEC, (uint64_t)path, (uint64_t)argv, (uint64_t)envp);
+        int rc = syscall(SYSCALL_EXEC, (uint64_t)path, (uint64_t)argv, (uint64_t)envp);
 		if (rc < 0)
             return -rc;
         sysdep<LibcLog>("SYSCALL_EXEC returned!");
@@ -337,14 +342,14 @@ namespace mlibc {
     }
 
     int Sysdeps<Chdir>::operator()(const char* path) {
-        long rc = syscall(SYSCALL_CHDIR, (uint64_t)path, strlen(path));
+        int rc = syscall(SYSCALL_CHDIR, (uint64_t)path, strlen(path));
         if (rc < 0)
             return -rc;
         return 0;
     }
 
     int Sysdeps<Fchdir>::operator()(int fd) {
-        long rc = syscall(SYSCALL_FCHDIR, fd);
+        int rc = syscall(SYSCALL_FCHDIR, fd);
         if (rc < 0)
             return -rc;
         return 0;
@@ -500,5 +505,72 @@ namespace mlibc {
         return 0;
     }
 #endif
+
+    int Sysdeps<Chmod>::operator()(const char* pathname, mode_t mode) {
+        return sysdep<Fchmodat>(AT_FDCWD, pathname, mode, 0);
+    }
+
+    int Sysdeps<Fchmod>::operator()(int fd, mode_t mode) {
+        return sysdep<Fchmodat>(fd, "", mode, AT_EMPTY_PATH);
+    }
+
+    int Sysdeps<Fchmodat>::operator()(int fd, const char* pathname, mode_t mode, int flags) {
+        int rc = syscall(SYSCALL_FCHMODAT, fd, (uint64_t)pathname, strlen(pathname), mode, flags);
+        if (rc < 0)
+            return -rc;
+        return 0;
+    }
+
+    int Sysdeps<Fchownat>::operator()(int dirfd, const char* pathname, uid_t owner, gid_t group, int flags) {
+        UGIDs ids = {owner, group};
+        int rc = syscall(SYSCALL_FCHOWNAT, dirfd, (uint64_t)pathname, strlen(pathname), std::bit_cast<uint64_t>(ids), flags);
+        if (rc < 0)
+            return -rc;
+        return 0;
+    }
+
+    int Sysdeps<SetResuid>::operator()(uid_t ruid, uid_t euid, uid_t suid) {
+        UIDs uids = {ruid, euid, suid};
+        int rc = syscall(SYSCALL_SETRESUID, (uint64_t)&uids);
+        if (rc < 0)
+            return -rc;
+        return 0;
+    }
+
+    int Sysdeps<SetResgid>::operator()(gid_t rgid, gid_t egid, gid_t sgid) {
+        GIDs gids = {rgid, egid, sgid};
+        int rc = syscall(SYSCALL_SETRESGID, (uint64_t)&gids);
+        if (rc < 0)
+            return -rc;
+        return 0;
+    }
+
+    int Sysdeps<SetUid>::operator()(uid_t uid) {
+        uid_t euid = sysdep<GetEuid>();
+        if (euid < 0)
+            return euid;
+        if (euid == 0)
+            return sysdep<SetResuid>(uid, uid, uid);
+        else
+            return sysdep<SetResuid>(-1, uid, -1);
+    }
+
+    int Sysdeps<SetEuid>::operator()(uid_t euid) {
+        return sysdep<SetResuid>(-1, euid, -1);
+    }
+
+    int Sysdeps<SetGid>::operator()(gid_t gid) {
+        uid_t euid = sysdep<GetEuid>();
+        if (euid < 0)
+            return euid;
+        if (euid == 0)
+            return sysdep<SetResgid>(gid, gid, gid);
+        else
+            return sysdep<SetResgid>(-1, gid, -1);
+    }
+
+    int Sysdeps<SetEgid>::operator()(gid_t egid) {
+        return sysdep<SetResgid>(-1, egid, -1);
+    }
 
 }
