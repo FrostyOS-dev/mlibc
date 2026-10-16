@@ -547,7 +547,7 @@ namespace mlibc {
 
     int Sysdeps<SetUid>::operator()(uid_t uid) {
         uid_t euid = sysdep<GetEuid>();
-        if (euid < 0)
+        if ((int)euid < 0)
             return euid;
         if (euid == 0)
             return sysdep<SetResuid>(uid, uid, uid);
@@ -561,7 +561,7 @@ namespace mlibc {
 
     int Sysdeps<SetGid>::operator()(gid_t gid) {
         uid_t euid = sysdep<GetEuid>();
-        if (euid < 0)
+        if ((int)euid < 0)
             return euid;
         if (euid == 0)
             return sysdep<SetResgid>(gid, gid, gid);
