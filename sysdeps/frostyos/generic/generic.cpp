@@ -93,7 +93,7 @@ namespace mlibc {
 	}
 
 	int Sysdeps<Close>::operator()(int fd) {
-		return syscall(SYSCALL_CLOSE, fd);
+		return -(int)syscall(SYSCALL_CLOSE, fd);
 	}
 
     int Sysdeps<ClockGet>::operator()(int clock, time_t *secs, long *nanos) {
@@ -142,28 +142,28 @@ namespace mlibc {
 	}
 
 	int Sysdeps<VmUnmap>::operator()(void *pointer, size_t size) {
-		long rc = syscall(SYSCALL_MUNMAP, (uintptr_t)pointer, size);
+		int rc = syscall(SYSCALL_MUNMAP, (uintptr_t)pointer, size);
         if (rc < 0)
             return -rc;
         return 0;
 	}
 
     int Sysdeps<VmProtect>::operator()(void *pointer, size_t size, int prot) {
-		long rc = syscall(SYSCALL_MPROTECT, (uint64_t)pointer, size, prot);
+		int rc = syscall(SYSCALL_MPROTECT, (uint64_t)pointer, size, prot);
         if (rc < 0)
             return -rc;
         return 0;
 	}
 
     int Sysdeps<TcbSet>::operator()(void *pointer) {
-        long rc = syscall(SYSCALL_SETTCB, (uintptr_t)pointer);
+        int rc = syscall(SYSCALL_SETTCB, (uintptr_t)pointer);
         if (rc < 0)
             return -rc;
         return 0;
     }
 
     int Sysdeps<Isatty>::operator()(int fd) {
-        long rc = syscall(SYSCALL_ISATTY, fd);
+        int rc = syscall(SYSCALL_ISATTY, fd);
         if (rc < 0)
             return -rc;
         return 0;
@@ -187,7 +187,7 @@ namespace mlibc {
 
     uid_t Sysdeps<GetUid>::operator()() {
         UIDs uids = {};
-        long rc = syscall(SYSCALL_GETRESUID, (uint64_t)&uids);
+        int rc = syscall(SYSCALL_GETRESUID, (uint64_t)&uids);
         if (rc < 0)
             return rc;
         return uids.ruid;
@@ -195,7 +195,7 @@ namespace mlibc {
 
     uid_t Sysdeps<GetEuid>::operator()() {
         UIDs uids = {};
-        long rc = syscall(SYSCALL_GETRESUID, (uint64_t)&uids);
+        int rc = syscall(SYSCALL_GETRESUID, (uint64_t)&uids);
         if (rc < 0)
             return rc;
         return uids.euid;
@@ -203,7 +203,7 @@ namespace mlibc {
 
     uid_t Sysdeps<GetGid>::operator()() {
         GIDs gids = {};
-        long rc = syscall(SYSCALL_GETRESGID, (uint64_t)&gids);
+        int rc = syscall(SYSCALL_GETRESGID, (uint64_t)&gids);
         if (rc < 0)
             return rc;
         return gids.rgid;
@@ -211,7 +211,7 @@ namespace mlibc {
 
     uid_t Sysdeps<GetEgid>::operator()() {
         GIDs gids = {};
-        long rc = syscall(SYSCALL_GETRESGID, (uint64_t)&gids);
+        int rc = syscall(SYSCALL_GETRESGID, (uint64_t)&gids);
         if (rc < 0)
             return rc;
         return gids.egid;
@@ -245,7 +245,7 @@ namespace mlibc {
     }
 
     int Sysdeps<GetCwd>::operator()(char* buffer, size_t size) {
-        long rc = syscall(SYSCALL_GETCWD, (uint64_t)buffer, size);
+        int rc = syscall(SYSCALL_GETCWD, (uint64_t)buffer, size);
         if (rc < 0)
             return -rc;
         return 0;
@@ -253,7 +253,7 @@ namespace mlibc {
 
     int Sysdeps<GetResuid>::operator()(uid_t* ruid, uid_t* euid, uid_t* suid) {
         UIDs uids = {};
-        long rc = syscall(SYSCALL_GETRESUID, (uint64_t)&uids);
+        int rc = syscall(SYSCALL_GETRESUID, (uint64_t)&uids);
         if (rc < 0)
             return -rc;
         *ruid = uids.ruid;
@@ -264,7 +264,7 @@ namespace mlibc {
 
     int Sysdeps<GetResgid>::operator()(gid_t* rgid, gid_t* egid, gid_t* sgid) {
         GIDs gids = {};
-        long rc = syscall(SYSCALL_GETRESGID, (uint64_t)&gids);
+        int rc = syscall(SYSCALL_GETRESGID, (uint64_t)&gids);
         if (rc < 0)
             return -rc;
         *rgid = gids.rgid;
@@ -281,7 +281,7 @@ namespace mlibc {
     }
 
     int Sysdeps<Sigprocmask>::operator()(int how, const sigset_t* __restrict set, sigset_t* __restrict retrieve) {
-        long rc = syscall(SYSCALL_SIGPROCMASK, how, (uint64_t)set, (uint64_t)retrieve);
+        int rc = syscall(SYSCALL_SIGPROCMASK, how, (uint64_t)set, (uint64_t)retrieve);
         if (rc < 0)
             return -rc;
         return 0;
@@ -299,14 +299,14 @@ namespace mlibc {
     }
 
     int Sysdeps<Kill>::operator()(pid_t pid, int signal) {
-        long rc = syscall(SYSCALL_KILL, pid, signal);
+        int rc = syscall(SYSCALL_KILL, pid, signal);
         if (rc < 0)
             return -rc;
         return 0;
     }
 
     int Sysdeps<Sigpending>::operator()(sigset_t* set) {
-        long rc = syscall(SYSCALL_SIGPENDING, (uint64_t)set);
+        int rc = syscall(SYSCALL_SIGPENDING, (uint64_t)set);
         if (rc < 0)
             return -rc;
         return 0;
