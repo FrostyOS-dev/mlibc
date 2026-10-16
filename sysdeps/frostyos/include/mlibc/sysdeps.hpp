@@ -9,6 +9,7 @@ struct FrostyOSSysdepTags :
     FutexWait,
     FutexWake,
     Open,
+    Openat,
     Read,
     Write,
     Seek,

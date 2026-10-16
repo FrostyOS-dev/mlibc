@@ -60,13 +60,17 @@ namespace mlibc {
         return 0;
     }
 
-    int Sysdeps<Open>::operator()(const char *pathname, int flags, mode_t mode, int *fd) {
-		int rc = syscall(SYSCALL_OPEN, (uint64_t)pathname, strlen(pathname), flags, mode);
+    int Sysdeps<Open>::operator()(const char* pathname, int flags, mode_t mode, int* fd) {
+		return sysdep<Openat>(AT_FDCWD, pathname, flags, mode, fd);
+	}
+
+    int Sysdeps<Openat>::operator()(int dirfd, const char* path, int flags, mode_t mode, int* fd) {
+        int rc = syscall(SYSCALL_OPENAT, dirfd, (uint64_t)path, strlen(path), flags, mode);
         if (rc < 0)
             return -rc;
         *fd = rc;
         return 0;
-	};
+    }
 
     int Sysdeps<Read>::operator()(int fd, void *buff, size_t count, ssize_t *bytes_read) {
         long rc = syscall(SYSCALL_READ, fd, (uint64_t)buff, count);
