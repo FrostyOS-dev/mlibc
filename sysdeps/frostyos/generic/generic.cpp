@@ -573,4 +573,15 @@ namespace mlibc {
         return sysdep<SetResgid>(-1, egid, -1);
     }
 
+    int Sysdeps<Unlinkat>::operator()(int dirfd, const char* path, int flags) {
+        int rc = syscall(SYSCALL_UNLINKAT, dirfd, (uint64_t)path, strlen(path), flags);
+        if (rc < 0)
+            return -rc;
+        return 0;
+    }
+
+    int Sysdeps<Rmdir>::operator()(const char* path) {
+        return sysdep<Unlinkat>(AT_FDCWD, path, AT_REMOVEDIR);
+    }
+
 }

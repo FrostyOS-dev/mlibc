@@ -44,7 +44,8 @@
     SC(FCHMODAT, fchmodat) \
     SC(FCHOWNAT, fchownat) \
     SC(SETRESUID, setresuid) \
-    SC(SETRESGID, setresgid)
+    SC(SETRESGID, setresgid) \
+    SC(UNLINKAT, unlinkat)
 
 enum SystemCalls : uint64_t {
 #define ENUMERATE_CALL(u, l) SYSCALL_##u,
