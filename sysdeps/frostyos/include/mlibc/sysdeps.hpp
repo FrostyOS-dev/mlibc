@@ -73,7 +73,12 @@ struct FrostyOSSysdepTags :
     SetGid,
     SetEgid,
     Unlinkat,
-    Rmdir
+    Rmdir,
+    Fcntl,
+    Dup,
+    Dup2,
+    Truncate,
+    Ftruncate
 {};
 
 template<typename Tag>

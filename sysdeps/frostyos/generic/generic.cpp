@@ -588,4 +588,43 @@ namespace mlibc {
         return sysdep<Unlinkat>(AT_FDCWD, path, AT_REMOVEDIR);
     }
 
+    int Sysdeps<Fcntl>::operator()(int fd, int request, va_list args, int* result) {
+        long arg = va_arg(args, uint64_t);
+        int rc = syscall(SYSCALL_FCNTL, fd, request, arg);
+        if (rc < 0) {
+            *result = 0;
+            return -rc;
+        }
+        *result = rc;
+        return 0;
+    }
+
+    int Sysdeps<Dup>::operator()(int fd, int flags, int* newfd) {
+        int rc = syscall(SYSCALL_DUP, fd, flags);
+        if (rc < 0)
+            return -rc;
+        *newfd = rc;
+        return 0;
+    }
+
+    int Sysdeps<Dup2>::operator()(int fd, int flags, int newfd) {
+        int rc = syscall(SYSCALL_DUP2, fd, newfd, flags);
+        if (rc < 0)
+            return -rc;
+        return 0;
+    }
+
+    int Sysdeps<Truncate>::operator()(const char* path, off_t length) {
+        int rc = syscall(SYSCALL_TRUNCATE, (uint64_t)path, strlen(path), length);
+        if (rc < 0)
+            return -rc;
+        return 0;
+    }
+
+    int Sysdeps<Ftruncate>::operator()(int fd, size_t size) {
+        int rc = syscall(SYSCALL_FTRUNCATE, fd, size);
+        if (rc < 0)
+            return -rc;
+        return 0;
+    }
 }
