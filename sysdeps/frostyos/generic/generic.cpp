@@ -174,19 +174,19 @@ namespace mlibc {
     }
 
     pid_t Sysdeps<GetPid>::operator()() {
-        return syscall(SYSCALL_GETPID);
+        return (long)syscall(SYSCALL_GETPID);
     }
 
     pid_t Sysdeps<GetPpid>::operator()() {
-        return syscall(SYSCALL_GETPPID);
+        return (long)syscall(SYSCALL_GETPPID);
     }
 
     int Sysdeps<FutexTid>::operator()() {
-        return syscall(SYSCALL_GETTID);
+        return (long)syscall(SYSCALL_GETTID);
     }
 
     pid_t Sysdeps<GetTid>::operator()() {
-        return syscall(SYSCALL_GETTID);
+        return (long)syscall(SYSCALL_GETTID);
     }
 
     uid_t Sysdeps<GetUid>::operator()() {
@@ -236,7 +236,7 @@ namespace mlibc {
 		long rc = syscall(SYSCALL_FORK);
 		if (rc < 0)
             return -rc;
-        *pid = rc;
+        *pid = (pid_t)rc;
         return 0;
 	}
 
@@ -303,7 +303,7 @@ namespace mlibc {
     }
 
     int Sysdeps<Kill>::operator()(pid_t pid, int signal) {
-        int rc = syscall(SYSCALL_KILL, pid, signal);
+        int rc = syscall(SYSCALL_KILL, (long)pid, signal);
         if (rc < 0)
             return -rc;
         return 0;
@@ -363,8 +363,11 @@ namespace mlibc {
         return syscall(SYSCALL_IOCTL, fd, request, (uint64_t)arg, (uint64_t)result);
     }
 
-    int Sysdeps<GetPgid>::operator()(pid_t pid, pid_t *pgid) {
-        *pgid = pid;
+    int Sysdeps<GetPgid>::operator()(pid_t pid, pid_t* pgid) {
+        long rc = syscall(SYSCALL_GETPGID, (long)pid);
+        if (rc < 0)
+            return -rc;
+        *pgid = (pid_t)rc;
         return 0;
     }
 
@@ -409,8 +412,8 @@ namespace mlibc {
     }
 
     int Sysdeps<Waitpid>::operator()(pid_t pid, int* status, int flags, struct rusage*, pid_t* ret_pid) {
-        long rc = syscall(SYSCALL_WAITPID, (uint64_t)pid, (uint64_t)status, flags);
-        if (rc > 0 && ret_pid != nullptr) {
+        long rc = syscall(SYSCALL_WAITPID, (long)pid, (uint64_t)status, flags);
+        if (rc >= 0 && ret_pid != nullptr) {
             *ret_pid = rc;
             return 0;
         }
@@ -626,5 +629,52 @@ namespace mlibc {
         if (rc < 0)
             return -rc;
         return 0;
+    }
+
+    int Sysdeps<SetPgid>::operator()(pid_t pid, pid_t pgid) {
+        int rc = syscall(SYSCALL_SETPGID, (long)pid, (long)pgid);
+        if (rc < 0)
+            return -rc;
+        return 0;
+    }
+
+    int Sysdeps<SetSid>::operator()(pid_t* sid) {
+        long rc = syscall(SYSCALL_SETSID);
+        if (rc < 0)
+            return -rc;
+        *sid = (int)rc;
+        return 0;
+    }
+
+    int Sysdeps<GetSid>::operator()(pid_t pid, pid_t* sid) {
+        long rc = syscall(SYSCALL_GETSID, (long)pid);
+        if (rc < 0)
+            return -rc;
+        *sid = (int)rc;
+        return 0;
+    }
+
+    int Sysdeps<Tcflush>::operator()(int fd, int queue) {
+        int res;
+        return sysdep<Ioctl>(fd, TCFLSH, &queue, &res);
+    }
+
+    int Sysdeps<Tcdrain>::operator()(int fd) {
+        int res;
+        int value = 0;
+        return sysdep<Ioctl>(fd, TCSBRK, &value, &res);
+    }
+
+    int Sysdeps<Sleep>::operator()(time_t* secs, long* nanos) {
+        timespec t = { *secs, *nanos };
+        int rc = syscall(SYSCALL_SLEEP, (uint64_t)&t);
+        if (rc == -EINTR) {
+            *secs = t.tv_sec;
+            *nanos = t.tv_nsec;
+        } else {
+            *secs = 0;
+            *nanos = 0;
+        }
+        return rc < 0 ? -rc : 0;
     }
 }

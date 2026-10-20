@@ -78,7 +78,13 @@ struct FrostyOSSysdepTags :
     Dup,
     Dup2,
     Truncate,
-    Ftruncate
+    Ftruncate,
+    SetPgid,
+    SetSid,
+    GetSid,
+    Tcflush,
+    Tcdrain,
+    Sleep
 {};
 
 template<typename Tag>

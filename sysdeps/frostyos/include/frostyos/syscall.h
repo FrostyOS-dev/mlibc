@@ -50,7 +50,12 @@
     SC(DUP, dup) \
     SC(DUP2, dup2) \
     SC(TRUNCATE, truncate) \
-    SC(FTRUNCATE, ftruncate)
+    SC(FTRUNCATE, ftruncate) \
+    SC(SETPGID, setpgid) \
+    SC(GETPGID, getpgid) \
+    SC(SETSID, setsid) \
+    SC(GETSID, getsid) \
+    SC(SLEEP, sleep)
 
 enum SystemCalls : uint64_t {
 #define ENUMERATE_CALL(u, l) SYSCALL_##u,
