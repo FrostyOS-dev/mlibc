@@ -149,7 +149,9 @@ int memfd_create(const char *name, unsigned int flags) {
 
 	return ret;
 }
+#endif /* __MLIBC_LINUX_OPTION */
 
+#if defined(__frostyos__) || __MLIBC_LINUX_OPTION
 int madvise(void *addr, size_t length, int advice) {
 	if(int e = mlibc::sysdep_or_enosys<Madvise>(addr, length, advice)) {
 		errno = e;
@@ -166,4 +168,4 @@ int mincore(void *addr, size_t length, unsigned char *vec) {
 	}
 	return 0;
 }
-#endif /* __MLIBC_LINUX_OPTION */
+#endif /* defined(__frostyos__) || __MLIBC_LINUX_OPTION */
