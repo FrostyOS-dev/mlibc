@@ -56,7 +56,8 @@
     SC(SETSID, setsid) \
     SC(GETSID, getsid) \
     SC(SLEEP, sleep) \
-    SC(PIPE, pipe)
+    SC(PIPE, pipe) \
+    SC(FACCESSAT, faccessat)
 
 enum SystemCalls : uint64_t {
 #define ENUMERATE_CALL(u, l) SYSCALL_##u,

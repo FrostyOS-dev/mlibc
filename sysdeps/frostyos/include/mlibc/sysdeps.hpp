@@ -1,5 +1,6 @@
 #pragma once
 
+#include "mlibc/sysdep-tags.hpp"
 #include <mlibc/sysdep-signatures.hpp>
 
 namespace mlibc {
@@ -85,7 +86,9 @@ struct FrostyOSSysdepTags :
     Tcflush,
     Tcdrain,
     Sleep,
-    Pipe
+    Pipe,
+    Access,
+    Faccessat
 {};
 
 template<typename Tag>

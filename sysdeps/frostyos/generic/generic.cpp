@@ -684,4 +684,15 @@ namespace mlibc {
             return -rc;
         return 0;
     }
+
+    int Sysdeps<Access>::operator()(const char* path, int mode) {
+        return sysdep<Faccessat>(AT_FDCWD, path, mode, 0);
+    }
+
+    int Sysdeps<Faccessat>::operator()(int dirfd, const char* pathname, int mode, int flags) {
+        int rc = syscall(SYSCALL_FACCESSAT, dirfd, (uint64_t)pathname, strlen(pathname), mode, flags);
+        if (rc < 0)
+            return -rc;
+        return 0;
+    }
 }
