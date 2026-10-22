@@ -677,4 +677,11 @@ namespace mlibc {
         }
         return rc < 0 ? -rc : 0;
     }
+
+    int Sysdeps<Pipe>::operator()(int* fds, int flags) {
+        int rc = syscall(SYSCALL_PIPE, (uint64_t)fds, flags);
+        if (rc < 0)
+            return -rc;
+        return 0;
+    }
 }

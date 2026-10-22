@@ -84,7 +84,8 @@ struct FrostyOSSysdepTags :
     GetSid,
     Tcflush,
     Tcdrain,
-    Sleep
+    Sleep,
+    Pipe
 {};
 
 template<typename Tag>
