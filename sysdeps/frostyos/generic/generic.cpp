@@ -1,4 +1,3 @@
-#include "mlibc/sysdep-tags.hpp"
 #include <bits/ensure.h>
 #include <mlibc/debug.hpp>
 #include <mlibc/all-sysdeps.hpp>
@@ -693,6 +692,11 @@ namespace mlibc {
         int rc = syscall(SYSCALL_FACCESSAT, dirfd, (uint64_t)pathname, strlen(pathname), mode, flags);
         if (rc < 0)
             return -rc;
+        return 0;
+    }
+
+    int Sysdeps<Umask>::operator()(mode_t mode, mode_t* old) {
+        *old = (unsigned int)syscall(SYSCALL_UMASK, mode);
         return 0;
     }
 }

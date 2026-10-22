@@ -88,7 +88,8 @@ struct FrostyOSSysdepTags :
     Sleep,
     Pipe,
     Access,
-    Faccessat
+    Faccessat,
+    Umask
 {};
 
 template<typename Tag>
