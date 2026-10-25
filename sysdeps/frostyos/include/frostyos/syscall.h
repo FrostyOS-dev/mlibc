@@ -58,7 +58,8 @@
     SC(SLEEP, sleep) \
     SC(PIPE, pipe) \
     SC(FACCESSAT, faccessat) \
-    SC(UMASK, umask)
+    SC(UMASK, umask) \
+    SC(DBGPRINTLN, dbgprintln)
 
 enum SystemCalls : uint64_t {
 #define ENUMERATE_CALL(u, l) SYSCALL_##u,

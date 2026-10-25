@@ -109,10 +109,8 @@ namespace mlibc {
         return 0;
     }
 
-    void Sysdeps<LibcLog>::operator()(const char *message) {
-        ssize_t bytes;
-		sysdep<Write>(STDERR_FILENO, message, strlen(message), &bytes);
-        sysdep<Write>(STDERR_FILENO, "\n", 1, &bytes);
+    void Sysdeps<LibcLog>::operator()(const char* message) {
+		syscall(SYSCALL_DBGPRINTLN, (uint64_t)message, strlen(message));
 	}
 
 	[[noreturn]] void Sysdeps<LibcPanic>::operator()() {
