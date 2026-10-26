@@ -89,7 +89,11 @@ struct FrostyOSSysdepTags :
     Pipe,
     Access,
     Faccessat,
-    Umask
+    Umask,
+    Rename,
+    Renameat,
+    Readlink,
+    Readlinkat
 {};
 
 template<typename Tag>

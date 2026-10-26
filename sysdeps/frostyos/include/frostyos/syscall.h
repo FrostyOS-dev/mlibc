@@ -59,7 +59,9 @@
     SC(PIPE, pipe) \
     SC(FACCESSAT, faccessat) \
     SC(UMASK, umask) \
-    SC(DBGPRINTLN, dbgprintln)
+    SC(DBGPRINTLN, dbgprintln) \
+    SC(RENAMEAT, renameat) \
+    SC(READLINKAT, readlinkat)
 
 enum SystemCalls : uint64_t {
 #define ENUMERATE_CALL(u, l) SYSCALL_##u,

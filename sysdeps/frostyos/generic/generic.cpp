@@ -697,4 +697,30 @@ namespace mlibc {
         *old = (unsigned int)syscall(SYSCALL_UMASK, mode);
         return 0;
     }
+
+    int Sysdeps<Rename>::operator()(const char* path, const char* new_path) {
+        return sysdep<Renameat>(AT_FDCWD, path, AT_FDCWD, new_path);
+    }
+
+    int Sysdeps<Renameat>::operator()(int olddirfd, const char* old_path, int newdirfd, const char* new_path) {
+        uint64_t fds = ((uint64_t)olddirfd << 32) | (uint32_t)newdirfd;
+        int rc = syscall(SYSCALL_RENAMEAT, fds, (uint64_t)old_path, strlen(old_path), (uint64_t)new_path, strlen(new_path));
+        if (rc < 0)
+            return -rc;
+        return 0;
+    }
+
+    int Sysdeps<Readlink>::operator()(const char* path, void* buffer, size_t max_size, ssize_t* length) {
+        return sysdep<Readlinkat>(AT_FDCWD, path, buffer, max_size, length);
+    }
+
+    int Sysdeps<Readlinkat>::operator()(int dirfd, const char* path, void* buffer, size_t max_size, ssize_t* length) {
+        ssize_t rc = syscall(SYSCALL_READLINKAT, dirfd, (uint64_t)path, strlen(path), (uint64_t)buffer, max_size);
+        if (rc < 0) {
+            *length = 0;
+            return -rc;
+        }
+        *length = rc;
+        return 0;
+    }
 }
