@@ -274,12 +274,23 @@ namespace mlibc {
         return 0;
     }
 
-    int Sysdeps<Ttyname>::operator()(int fd, char *buf, size_t size) {
-        (void)fd;
-        (void)buf;
-        (void)size;
-        return 0;
+    #ifndef MLIBC_BUILDING_RTLD
+    #define IOCTL_TTY_GET_NAME 0x464F5354474E
+    #define TTY_NAME_MAX 24
+    #define TTY_PREFIX "/dev/"
+
+    int Sysdeps<Ttyname>::operator()(int fd, char* buf, size_t size) {
+        size_t prefixLen = strlen(TTY_PREFIX);
+        if (size < TTY_NAME_MAX + prefixLen)
+            return -EINVAL;
+
+        strcpy(buf, TTY_PREFIX);
+
+        int res;
+        return sysdep<Ioctl>(fd, IOCTL_TTY_GET_NAME, (void*)(buf + prefixLen), &res);
     }
+
+    #endif
 
     int Sysdeps<Sigprocmask>::operator()(int how, const sigset_t* __restrict set, sigset_t* __restrict retrieve) {
         int rc = syscall(SYSCALL_SIGPROCMASK, how, (uint64_t)set, (uint64_t)retrieve);
