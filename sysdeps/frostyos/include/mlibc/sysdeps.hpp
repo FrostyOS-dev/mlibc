@@ -93,7 +93,9 @@ struct FrostyOSSysdepTags :
     Rename,
     Renameat,
     Readlink,
-    Readlinkat
+    Readlinkat,
+    SetItimer,
+    Fsync
 {};
 
 template<typename Tag>

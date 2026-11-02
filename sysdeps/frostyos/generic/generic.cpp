@@ -734,4 +734,12 @@ namespace mlibc {
         *length = rc;
         return 0;
     }
+
+    int Sysdeps<SetItimer>::operator()(int which, const struct itimerval *new_value, struct itimerval *old_value) {
+		return 0;
+	}
+
+    int Sysdeps<Fsync>::operator()(int) {
+        return 0;
+    }
 }
