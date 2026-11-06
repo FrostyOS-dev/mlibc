@@ -742,4 +742,73 @@ namespace mlibc {
     int Sysdeps<Fsync>::operator()(int) {
         return 0;
     }
+
+    int Sysdeps<Socket>::operator()(int family, int type, int protocol, int* fd) {
+        int rc = syscall(SYSCALL_SOCKET, family, type, protocol);
+        if (rc < 0)
+            return -rc;
+        *fd = rc;
+        return 0;
+    }
+
+    int Sysdeps<Socketpair>::operator()(int domain, int type_and_flags, int proto, int* fds) {
+        return syscall(SYSCALL_SOCKETPAIR, domain, type_and_flags, proto, (uint64_t)fds);
+    }
+
+    int Sysdeps<Bind>::operator()(int fd, const struct sockaddr* addr_ptr, socklen_t addr_length) {
+        return syscall(SYSCALL_BIND, fd, (uint64_t)addr_ptr, addr_length);
+    }
+
+    int Sysdeps<Listen>::operator()(int fd, int backlog) {
+        return syscall(SYSCALL_LISTEN, fd, backlog);
+    }
+
+    int Sysdeps<Accept>::operator()(int fd, int* newfd, struct sockaddr* addr_ptr, socklen_t* addr_length, int flags) {
+        socklen_t maxAddrLen = addr_length == nullptr ? 0 : *addr_length;
+        int rc = syscall(SYSCALL_ACCEPT, fd, (uint64_t)addr_ptr, maxAddrLen, (uint64_t)addr_length, flags);
+        if (rc < 0)
+            return -rc;
+        *newfd = rc;
+        return 0;
+    }
+
+    int Sysdeps<Connect>::operator()(int fd, const struct sockaddr* addr_ptr, socklen_t addr_length) {
+        return syscall(SYSCALL_CONNECT, fd, (uint64_t)addr_ptr, addr_length);
+    }
+
+    int Sysdeps<MsgSend>::operator()(int fd, const struct msghdr* hdr, int flags, ssize_t* length) {
+        ssize_t rc = syscall(SYSCALL_SENDMSG, fd, (uint64_t)hdr, flags);
+        if (rc < 0)
+            return -rc;
+        *length = rc;
+        return 0;
+    }
+
+    int Sysdeps<MsgRecv>::operator()(int fd, struct msghdr* hdr, int flags, ssize_t* length) {
+        ssize_t rc = syscall(SYSCALL_RECVMSG, fd, (uint64_t)hdr, flags);
+        if (rc < 0)
+            return -rc;
+        *length = rc;
+        return 0;
+    }
+
+    int Sysdeps<Shutdown>::operator()(int sockfd, int how) {
+        return syscall(SYSCALL_SHUTDOWN, sockfd, how);
+    }
+
+    int Sysdeps<Sockname>::operator()(int fd, struct sockaddr* addr_ptr, socklen_t max_addr_length, socklen_t* actual_length) {
+        return syscall(SYSCALL_SOCKNAME, fd, (uint64_t)addr_ptr, max_addr_length, (uint64_t)actual_length);
+    }
+
+    int Sysdeps<Peername>::operator()(int fd, struct sockaddr* addr_ptr, socklen_t max_addr_length, socklen_t* actual_length) {
+        return syscall(SYSCALL_PEERNAME, fd, (uint64_t)addr_ptr, max_addr_length, (uint64_t)actual_length);
+    }
+
+    int Sysdeps<GetSockopt>::operator()(int fd, int layer, int number, void* buffer, socklen_t* size) {
+        return syscall(SYSCALL_GETSOCKOPT, fd, layer, number, (uint64_t)buffer, (uint64_t)size);
+    }
+
+    int Sysdeps<SetSockopt>::operator()(int fd, int layer, int number, const void* buffer, socklen_t size) {
+        return syscall(SYSCALL_SETSOCKOPT, fd, layer, number, (uint64_t)buffer, size);
+    }
 }

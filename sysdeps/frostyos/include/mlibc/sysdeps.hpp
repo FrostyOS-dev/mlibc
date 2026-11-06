@@ -95,7 +95,20 @@ struct FrostyOSSysdepTags :
     Readlink,
     Readlinkat,
     SetItimer,
-    Fsync
+    Fsync,
+    Socket,
+    Socketpair,
+    Bind,
+    Listen,
+    Accept,
+    Connect,
+    MsgRecv,
+    MsgSend,
+    Shutdown,
+    Sockname,
+    Peername,
+    GetSockopt,
+    SetSockopt
 {};
 
 template<typename Tag>

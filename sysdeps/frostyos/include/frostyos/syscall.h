@@ -61,7 +61,20 @@
     SC(UMASK, umask) \
     SC(DBGPRINTLN, dbgprintln) \
     SC(RENAMEAT, renameat) \
-    SC(READLINKAT, readlinkat)
+    SC(READLINKAT, readlinkat) \
+    SC(SOCKET, socket) \
+    SC(SOCKETPAIR, socketpair) \
+    SC(BIND, bind) \
+    SC(LISTEN, listen) \
+    SC(ACCEPT, accept) \
+    SC(CONNECT, connect) \
+    SC(SENDMSG, sendmsg) \
+    SC(RECVMSG, recvmsg) \
+    SC(SHUTDOWN, shutdown) \
+    SC(SOCKNAME, sockname) \
+    SC(PEERNAME, peername) \
+    SC(GETSOCKOPT, getsockopt) \
+    SC(SETSOCKOPT, setsockopt)
 
 enum SystemCalls : uint64_t {
 #define ENUMERATE_CALL(u, l) SYSCALL_##u,
