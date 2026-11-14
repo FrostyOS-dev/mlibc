@@ -78,39 +78,44 @@ if not no_headers
 endif
 
 if not headers_only
-	crt = custom_target('crt1',
-		build_by_default: true,
-		command: c_compiler.cmd_array() + ['-c', '-o', '@OUTPUT@', '@INPUT@'],
-		input: 'x86_64/crt1.S',
-		output: 'crt1.o',
-		install: true,
-		install_dir: get_option('libdir')
-	)
+	crtstuff = ['crt1', 'Scrt1', 'crti', 'crtn']
+	foreach crtthing : crtstuff
+		crtf = crtthing + '.S'
+		crt_src = files(host_machine.cpu_family() / crtf)
+		crt = custom_target(crtthing,
+			build_by_default: true,
+			command: c_compiler.cmd_array() + ['-c', '-o', '@OUTPUT@', '@INPUT@'],
+			input: crt_src,
+			output: crtthing + '.o',
+			install: true,
+			install_dir: get_option('libdir'),
+		)
+	endforeach
 
-	crt_pie = custom_target('Scrt1',
-		build_by_default: true,
-		command: c_compiler.cmd_array() + ['-c', '-o', '@OUTPUT@', '@INPUT@'],
-		input: 'x86_64/crt1.S',
-		output: 'Scrt1.o',
-		install: true,
-		install_dir: get_option('libdir')
-	)
+	# crt_pie = custom_target('Scrt1',
+	# 	build_by_default: true,
+	# 	command: c_compiler.cmd_array() + ['-c', '-o', '@OUTPUT@', '@INPUT@'],
+	# 	input: 'x86_64/crt1.S',
+	# 	output: 'Scrt1.o',
+	# 	install: true,
+	# 	install_dir: get_option('libdir')
+	# )
 
-	custom_target('crti',
-		build_by_default: true,
-		command: c_compiler.cmd_array() + ['-c', '-o', '@OUTPUT@', '@INPUT@'],
-		input: 'x86_64/crti.S',
-		output: 'crti.o',
-		install: true,
-		install_dir: get_option('libdir')
-	)
+	# crt += custom_target('crti',
+	# 	build_by_default: true,
+	# 	command: c_compiler.cmd_array() + ['-c', '-o', '@OUTPUT@', '@INPUT@'],
+	# 	input: 'x86_64/crti.S',
+	# 	output: 'crti.o',
+	# 	install: true,
+	# 	install_dir: get_option('libdir')
+	# )
 
-	custom_target('crtn',
-		build_by_default: true,
-		command: c_compiler.cmd_array() + ['-c', '-o', '@OUTPUT@', '@INPUT@'],
-		input: 'x86_64/crtn.S',
-		output: 'crtn.o',
-		install: true,
-		install_dir: get_option('libdir')
-	)
+	# crt += custom_target('crtn',
+	# 	build_by_default: true,
+	# 	command: c_compiler.cmd_array() + ['-c', '-o', '@OUTPUT@', '@INPUT@'],
+	# 	input: 'x86_64/crtn.S',
+	# 	output: 'crtn.o',
+	# 	install: true,
+	# 	install_dir: get_option('libdir')
+	# )
 endif
