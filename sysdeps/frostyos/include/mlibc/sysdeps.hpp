@@ -108,7 +108,8 @@ struct FrostyOSSysdepTags :
     Sockname,
     Peername,
     GetSockopt,
-    SetSockopt
+    SetSockopt,
+    Utimensat
 {};
 
 template<typename Tag>

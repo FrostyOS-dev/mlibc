@@ -74,7 +74,8 @@
     SC(SOCKNAME, sockname) \
     SC(PEERNAME, peername) \
     SC(GETSOCKOPT, getsockopt) \
-    SC(SETSOCKOPT, setsockopt)
+    SC(SETSOCKOPT, setsockopt) \
+    SC(UTIMENSAT, utimensat)
 
 enum SystemCalls : uint64_t {
 #define ENUMERATE_CALL(u, l) SYSCALL_##u,

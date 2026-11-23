@@ -814,4 +814,13 @@ namespace mlibc {
     int Sysdeps<SetSockopt>::operator()(int fd, int layer, int number, const void* buffer, socklen_t size) {
         return syscall(SYSCALL_SETSOCKOPT, fd, layer, number, (uint64_t)buffer, size);
     }
+
+    int Sysdeps<Utimensat>::operator()(int dirfd, const char* pathname, const struct timespec* times, int flags) {
+        if (pathname == nullptr || pathname[0] == '\0')
+            flags |= AT_EMPTY_PATH;
+        int rc = syscall(SYSCALL_UTIMENSAT, dirfd, (uint64_t)pathname, pathname != nullptr ? strlen(pathname) : 0, (uint64_t)times, flags);
+        if (rc < 0)
+            return -rc;
+        return 0;
+    }
 }
