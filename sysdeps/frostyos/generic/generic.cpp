@@ -735,7 +735,10 @@ namespace mlibc {
         return 0;
     }
 
-    int Sysdeps<SetItimer>::operator()(int which, const struct itimerval *new_value, struct itimerval *old_value) {
+    int Sysdeps<SetItimer>::operator()(int which, const struct itimerval* new_value, struct itimerval* old_value) {
+        (void)which;
+        (void)new_value;
+        (void)old_value;
 		return 0;
 	}
 
