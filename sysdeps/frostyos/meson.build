@@ -75,6 +75,16 @@ if not no_headers
         subdir: 'frostyos',
         follow_symlinks: true,
     )
+
+	install_headers(
+		'include/asm/input.h',
+		'include/asm/ioctls.h',
+		'include/asm/key.h',
+		'include/asm/types.h',
+		'include/asm/video.h',
+		subdir: 'asm',
+		follow_symlinks: true,
+	)
 endif
 
 if not headers_only
